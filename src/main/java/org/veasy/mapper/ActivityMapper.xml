@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.veasy.mapper.ActivityMapper">
+<!--    <resultMap type="ActivityEntity" id="activityResultMap">-->
+<!--        <result property="status" column="status_id" />-->
+<!--        <association property="statusEntity" column="id" resultMap="statusResultMap"/>-->
+<!--    </resultMap>-->
+
+    <select id="loadAllActivity" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity
+    </select>
+
+    <select id="loadUnderApplyActivity" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity a
+        LEFT JOIN status s ON a.`statusId` = s.`id`
+        WHERE a.`statusId` = 1
+    </select>
+
+    <select id="loadMyActivity" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity a
+        WHERE a.`statusId` IN (1,2,3)
+    </select>
+
+    <select id="loadActivityByTime" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity a
+        WHERE a.`startTime` >= #{sT} AND #{eT} >= a.`endTime`
+    </select>
+
+    <insert id="createActivityByAdmin" parameterType="org.veasy.entity.Activity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity a SET a.`name` = #{name},a.`startTime` = #{startTime},a.`endTime` = #{endTime},a.`location` = #{location},a.`volunteerNum` = #{volunteerNum},a.`contactWay` = #{contactWay},a.`summary` = #{summary},a.`statusId` = #{statusId},a.`status` = #{status},a.`hours` = #{hours}
+    </insert>
+</mapper>
+
