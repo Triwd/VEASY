@@ -16,8 +16,11 @@ public interface ActivityMapper {
     //返回状态为“报名中”的活动
     public List<Activity> loadUnderApplyActivity();
 
+    //返回状态为“已结束”的活动
+    List<Activity> loadEndActivity();
+
     //返回用户参与的活动
-    public List<Activity> loadMyActivity();
+    public List<Activity> loadMyActivity(Integer id);
 
     List<Activity> loadActivityByTime(@Param("sT") Date startTime, @Param("eT") Date endTime);
 

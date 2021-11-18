@@ -47,6 +47,7 @@ public class User implements UserDetails {
         this.idCard = idCard;
     }
 
+    @Override
     public String getUsername() {
         return studentNo;
     }
@@ -55,6 +56,7 @@ public class User implements UserDetails {
         this.studentNo = studentNo;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }

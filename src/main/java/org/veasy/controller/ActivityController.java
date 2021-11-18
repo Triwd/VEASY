@@ -22,7 +22,9 @@ public class ActivityController {
     @Autowired
     StatusService statusService;
 
-    @RequestMapping("/loadAllActivity")
+
+    //供测试使用的接口
+    @RequestMapping("/admin/loadAllActivity")
     @ResponseBody
     public List<Activity> loadAllActivity(){
         //加载数据，存入列表
@@ -32,7 +34,10 @@ public class ActivityController {
         return activityList;
     }
 
-    @RequestMapping("/loadUnderApplyActivity")
+    /**
+        “活动”菜单需要的接口
+     **/
+    @RequestMapping("/user/loadUnderApplyActivity")
     @ResponseBody
     public List<Activity> loadUnderApplyActivity(){
         List<Activity> activityList = activityService.loadUnderApplyActivity();
@@ -40,15 +45,26 @@ public class ActivityController {
         return activityList;
     }
 
-    @RequestMapping("/loadMyActivity")
+    /**
+        “我的”菜单需要的接口
+     **/
+
+    @RequestMapping("/user/loadMyActivity")
     @ResponseBody
     public List<Activity> loadMyActivity(){
         List<Activity> activityList = activityService.loadMyActivity();
+        return activityList;
+    }
+
+    @RequestMapping(value = "/user/loadEndActivity")
+    @ResponseBody
+    public List<Activity> loadEndActivity(){
+        List<Activity> activityList = activityService.loadEndActivity();
         statusService.addValueOfStatus(activityList);
         return activityList;
     }
 
-    @RequestMapping("/loadActivityByTime")
+    @RequestMapping("/admin/loadActivityByTime")
     @ResponseBody
     public List<Activity> loadActivityByTime(@DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss") Date endTime){
         List<Activity> activityList = activityService.loadActivityByTime(startTime, endTime);

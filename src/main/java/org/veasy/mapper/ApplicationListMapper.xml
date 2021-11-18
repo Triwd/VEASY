@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.veasy.mapper.ApplicationListMapper">
+    <insert id="applyActivity" parameterType="org.veasy.entity.ApplicationList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO application_form
+            SET studentId = #{studentId},
+                activityId = #{activityId},
+                applyTime = #{applyTime}
+    </insert>
+
+    <select id="isApplied" resultType="Boolean">
+        SELECT *
+        FROM application_list a
+        WHERE a.`studentId` = #{studentId} AND a.`activityId` = #{activityId}
+    </select>
+</mapper>
