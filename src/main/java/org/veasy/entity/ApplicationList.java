@@ -8,6 +8,12 @@ public class ApplicationList {
     private Integer activityId;
     private Date applyTime;
 
+    public ApplicationList(Integer studentId, Integer activityId, Date applyTime){
+        this.studentId = studentId;
+        this.activityId = activityId;
+        this.applyTime = applyTime;
+    }
+
     public Integer getId() {
         return id;
     }

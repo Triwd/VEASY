@@ -52,37 +52,40 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * 角色为“student”需要的服务
-     **/
+     * Service of student
+     */
 
+    //获取当前用户的学号
     public String getCurrentStudentNo(){
         return Util.getCurrentUser().getUsername();
     }
 
+    //获取当前用户的id
     public Integer getCurrentId(){
         return Util.getCurrentUser().getId();
     }
 
+    //获取当前用户的姓名
     public String getCurrentName(){ return Util.getCurrentUser().getName(); }
 
+    //申请报名活动（MOP）
     public boolean applyActivity(Integer activityId){
         Date applyTime = new Date();
-        ApplicationList applicationList = new ApplicationList();
-        applicationList.setStudentId(getCurrentId());
-        applicationList.setActivityId(activityId);
-        applicationList.setApplyTime(applyTime);
+        ApplicationList applicationList = new ApplicationList(getCurrentId(), activityId, applyTime);
         if(applicationListMapper.isApplied(getCurrentId(),activityId)){
             return false;
         }
         else return applicationListMapper.applyActivity(applicationList);
     }
 
+    //申请修改密码
     public boolean applyRevisePwd(String idCard) {
         String realIdCard = userMapper.getIdCardByStudentNo(getCurrentStudentNo());
         if(idCard == realIdCard) return true;
         else return false;
     }
 
+    //修改密码
     public boolean revisePwd(String newPwd) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String pwdAfterEncode = bCryptPasswordEncoder.encode(newPwd);
@@ -93,9 +96,10 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     角色为“admin”需要的服务
-     **/
+     * Service of admin
+     */
 
+    //生成季度报告
     public List<Activity> generateSeasonReport(){
 
         Date currentDate = new Date();
@@ -105,7 +109,6 @@ public class UserService implements UserDetailsService {
         if(currentDateMonth < 4) startMonth = 4;
         else if(currentDateMonth < 7) startMonth = 7;
         else if(currentDateMonth < 10) startMonth = 10;
-        else startMonth = 1;
         time.set(Calendar.MONTH,startMonth-1);
         time.set(Calendar.DAY_OF_MONTH,1);
         time.set(Calendar.HOUR_OF_DAY,0);
@@ -119,6 +122,7 @@ public class UserService implements UserDetailsService {
         return activityMapper.loadActivityByTime(startTime, endTime);
     }
 
+    //生成年度报告
     public List<Activity> generateYearReport() {
 
         Calendar time = Calendar.getInstance();

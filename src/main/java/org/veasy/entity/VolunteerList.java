@@ -5,6 +5,11 @@ public class VolunteerList {
     private Integer studentId;
     private Integer activityId;
 
+    public VolunteerList(Integer studentId, Integer activityId) {
+        this.studentId = studentId;
+        this.activityId = activityId;
+    }
+
     public Integer getId() {
         return id;
     }

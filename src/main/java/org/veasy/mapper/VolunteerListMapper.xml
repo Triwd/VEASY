@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.veasy.mapper.VolunteerListMapper">
+    <insert id="addVolunteer" parameterType="org.veasy.entity.VolunteerList" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO volunteer_list
+        SET studentId = #{studentId},
+            activityId = #{activityId}
+    </insert>
+
+    <select id="isAdded" resultType="Boolean">
+        SELECT *
+        FROM application_list a
+        WHERE a.`studentId` = #{studentId} AND a.`activityId` = #{activityId}
+    </select>
+</mapper>

@@ -3,10 +3,17 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.veasy.mapper.ActivityMapper">
-<!--    <resultMap type="ActivityEntity" id="activityResultMap">-->
-<!--        <result property="status" column="status_id" />-->
-<!--        <association property="statusEntity" column="id" resultMap="statusResultMap"/>-->
-<!--    </resultMap>-->
+
+    <insert id="createActivityByAdmin" parameterType="org.veasy.entity.Activity" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO activity a SET a.`name` = #{name}, a.`startTime` = #{startTime}, a.`endTime` = #{endTime},a.`location` = #{location},a.`volunteerNum` = #{volunteerNum},a.`contactWay` = #{contactWay},a.`summary` = #{summary},a.`statusId` = #{statusId},a.`status` = #{status},a.`hours` = #{hours}
+    </insert>
+
+<!--    取消活动要删除活动表，报名表，志愿者表中的全部信息-->
+    <delete id="cancelActivity">
+        DELETE FROM activity a WHERE a.`id` = #{activityId};
+        DELETE FROM application_form af WHERE af.`activityId` = #{activityId};
+        DELETE FROM volunteer_list vl WHERE vl.`activityId` = #{activityId};
+    </delete>
 
     <select id="loadAllActivity" resultType="org.veasy.entity.Activity">
         SELECT *
@@ -23,7 +30,7 @@
     <select id="loadEndActivity" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
-                 LEFT JOIN status s ON a.`statusId` = s.`id`
+        LEFT JOIN status s ON a.`statusId` = s.`id`
         WHERE a.`statusId` = 3
     </select>
 
@@ -40,9 +47,7 @@
         WHERE a.`startTime` >= #{sT} AND #{eT} >= a.`endTime`
     </select>
 
-    <insert id="createActivityByAdmin" parameterType="org.veasy.entity.Activity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO activity a SET a.`name` = #{name},a.`startTime` = #{startTime},a.`endTime` = #{endTime},a.`location` = #{location},a.`volunteerNum` = #{volunteerNum},a.`contactWay` = #{contactWay},a.`summary` = #{summary},a.`statusId` = #{statusId},a.`status` = #{status},a.`hours` = #{hours}
-    </insert>
+
 
 </mapper>
 
