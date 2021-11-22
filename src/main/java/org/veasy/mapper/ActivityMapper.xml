@@ -5,7 +5,16 @@
 <mapper namespace="org.veasy.mapper.ActivityMapper">
 
     <insert id="createActivityByAdmin" parameterType="org.veasy.entity.Activity" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO activity a SET a.`name` = #{name}, a.`startTime` = #{startTime}, a.`endTime` = #{endTime},a.`location` = #{location},a.`volunteerNum` = #{volunteerNum},a.`contactWay` = #{contactWay},a.`summary` = #{summary},a.`statusId` = #{statusId},a.`status` = #{status},a.`hours` = #{hours}
+        INSERT INTO activity
+        SET `name`         = #{name},
+            `startTime`    = #{startTime},
+            `endTime`      = #{endTime},
+            `location`     = #{location},
+            `volunteerNum` = #{volunteerNum},
+            `contactWay`   = #{contactWay},
+            `statusId`     = #{statusId},
+            `hours`        = #{hours},
+            `restNum`      = #{volunteerNum}
     </insert>
 
 <!--    取消活动要删除活动表，报名表，志愿者表中的全部信息-->
@@ -37,17 +46,27 @@
     <select id="loadMyActivity" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
-        LEFT JOIN volunteer_list vl ON a.`id` = vl.`activityId`
+                 LEFT JOIN volunteer_list vl ON a.`id` = vl.`activityId`
         WHERE vl.`studentId` = #{id}
     </select>
 
     <select id="loadActivityByTime" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
-        WHERE a.`startTime` >= #{sT} AND #{eT} >= a.`endTime`
+        WHERE a.`startTime` >= #{sT}
+          AND #{eT} >= a.`endTime`
     </select>
 
+    <update id="updateRestNum">
+        UPDATE activity a
+        SET a.restNum = #{restNum}
+        WHERE a.id = #{activityId}
+    </update>
 
-
+    <update id="activitySummary">
+        UPDATE activity a
+        SET a.`summary` = #{summary}
+        WHERE a.`id` = #{activityId}
+    </update>
 </mapper>
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.veasy.mapper.ModeMapper">
+    <select id="getUsingMode" resultType="org.veasy.entity.SelectMode">
+        SELECT *
+        FROM select_mode sm
+        WHERE sm.`use` = 1
+    </select>
+
+    <update id="setMode" resultType="Boolean">
+        UPDATE select_mode sm
+        SET sm.`use` = #{use}
+    </update>
+</mapper>

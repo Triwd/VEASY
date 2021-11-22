@@ -28,54 +28,54 @@ public class AdminController {
     RedisUtils redisUtils;
 
     //创建活动
-    @RequestMapping (value = "/createActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "/createActivity", method = RequestMethod.POST)
     @ResponseBody
-    public String createActivity(@RequestBody Activity activity){
-        if(activityService.createActivityByAdmin(activity))
-        {
-            System.out.println("创建"+activity.getName()+"活动成功");
-            return "添加成功";
-        }
-        else return "添加失败，请重试或联系运维人员";
+    public Response createActivity(@RequestBody Activity activity) {
+        if (activityService.createActivityByAdmin(activity)) {
+            return new Response("success", "新建活动成功！");
+        } else return new Response("failed", "新建活动失败，请重试或者联系运维人员！");
     }
 
     //取消活动
     @RequestMapping (value = "/cancelActivity",method = RequestMethod.POST)
     @ResponseBody
     public Response cancelActivity(@Param(value = "id") Integer activityId){
-        if(activityService.cancelActivity(activityId))
-        {
+        if (activityService.cancelActivity(activityId)) {
             return new Response("success!", "活动已取消");
-        }
-        else return new Response("failed!", "活动不存在，取消活动失败，请刷新页面");
+        } else return new Response("failed!", "活动不存在，取消活动失败，请刷新页面");
     }
 
     //开启报名
     @RequestMapping (value = "/openSign",method = RequestMethod.POST)
     @ResponseBody
     public Response openSign(@Param(value = "id")Integer activityId){
-        if(activityService.openSign(activityId))
-        {
+        if (activityService.openSign(activityId)) {
             return new Response("success", "已开启报名");
-        }
-        else return new Response("failed", "开启报名失败，请重试或联系运维人员");
+        } else return new Response("failed", "活动已经开启，请不要重复开启报名");
     }
 
-    //开启报名
-    @RequestMapping (value = "/closeSign",method = RequestMethod.POST)
+    //关闭报名
+    @RequestMapping(value = "/closeSign", method = RequestMethod.POST)
     @ResponseBody
-    public Response closeSign(@Param(value = "id")Integer activityId){
-        if(activityService.closeSign(activityId))
-        {
+    public Response closeSign(@Param(value = "id") Integer activityId) {
+        if (activityService.closeSign(activityId)) {
             return new Response("success", "已关闭报名");
-        }
-        else return new Response("failed", "关闭报名失败，请重试或联系运维人员");
+        } else return new Response("failed", "活动已经关闭报名或者被取消，如有问题联系运维人员");
+    }
+
+    //活动结束总结
+    @RequestMapping("/activitySummary")
+    @ResponseBody
+    public Response activitySummary(Integer activityId, String summary) {
+        if (userService.activitySummary(activityId, summary)) {
+            return new Response("success", "已完成活动结束总结，本次活动已经结束，辛苦啦");
+        } else return new Response("failed", "活动还没有结束，请活动结束后再进行总结噢");
     }
 
     //根据id查找活动
-    @RequestMapping (value = "/getActivityById",method = RequestMethod.POST)
+    @RequestMapping(value = "/getActivityById", method = RequestMethod.POST)
     @ResponseBody
-    public Activity getActivityById(@Param(value = "id")Integer activityId){
+    public Activity getActivityById(@Param(value = "id") Integer activityId) {
         return activityService.getActivityById(activityId);
     }
 
@@ -96,8 +96,28 @@ public class AdminController {
     //生成年度报告
     @RequestMapping("/generateYearReport")
     @ResponseBody
-    public List<Activity> generateYearReport(){
+    public List<Activity> generateYearReport() {
         List<Activity> yearReport = userService.generateYearReport();
         return yearReport;
+    }
+
+    //开启普通选拔模式
+    @RequestMapping("/normalSelectModel")
+    @ResponseBody
+    public Response normalSelectModel() {
+        if (userService.normalSelectModel()) {
+            return new Response("success", "开启普通选拔模式成功！");
+        }
+        return new Response("failed", "开启普通选拔模式失败，请重试或联系管理员！");
+    }
+
+    //开启多目标选拔模式
+    @RequestMapping("/MOPSelectModel")
+    @ResponseBody
+    public Response MOPSelectModel() {
+        if (userService.MOPSelectMode()) {
+            return new Response("success", "开启多目标选拔模式成功！");
+        }
+        return new Response("failed", "开启多目标选拔模式失败，请重试或联系管理员！");
     }
 }

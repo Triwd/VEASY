@@ -19,6 +19,15 @@ public class Activity {
     private Integer statusId;
     private String status;
     private Float hours;
+    private Integer restNum;
+
+    public Integer getRestNum() {
+        return restNum;
+    }
+
+    public void setRestNum(Integer restNum) {
+        this.restNum = restNum;
+    }
 
     public Integer getStatusId() {
         return statusId;

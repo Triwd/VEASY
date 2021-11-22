@@ -8,4 +8,10 @@
         FROM status s
         WHERE s.`id` = #{id}
     </select>
+
+    <update id="setActivityStatusById">
+        UPDATE activity a
+        SET a.`statusId` = #{id}
+        WHERE a.id = #{activityId}
+    </update>
 </mapper>

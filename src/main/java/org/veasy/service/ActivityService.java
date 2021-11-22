@@ -5,9 +5,7 @@ import org.springframework.stereotype.Service;
 import org.veasy.entity.Activity;
 import org.veasy.entity.ApplicationList;
 import org.veasy.entity.VolunteerList;
-import org.veasy.mapper.ActivityMapper;
-import org.veasy.mapper.ApplicationListMapper;
-import org.veasy.mapper.VolunteerListMapper;
+import org.veasy.mapper.*;
 import org.veasy.utils.RedisUtils;
 import org.veasy.utils.Util;
 
@@ -32,44 +30,61 @@ public class ActivityService {
     @Autowired
     VolunteerListMapper volunteerListMapper;
 
+    @Autowired
+    ModeMapper modeMapper;
+
+    @Autowired
+    StatusMapper statusMapper;
+
     /**
      * Service for admin
      */
 
     //管理员创建活动(直接写入SQL)
-    public boolean createActivityByAdmin(Activity activity){
+    public boolean createActivityByAdmin(Activity activity) {
         return activityMapper.createActivityByAdmin(activity) == 1;
     }
 
     //取消活动，将活动id和名额从redis和MySQL中移除
     public boolean cancelActivity(Integer activityId){
-        if(activityMapper.cancelActivity(activityId)){ //如果删除数据库中的活动成功则去删除redis中的对应信息
+        if (activityMapper.cancelActivity(activityId)) { //如果删除数据库中的活动成功则去删除redis中的对应信息
             return redisUtils.removeActivityCache(activityId);
-        }else return false;
+        } else return false;
     }
 
-    //开启报名，将活动id和名额存入缓存中
-    public boolean openSign(Integer activityId){
+    //开启报名，将活动id和剩余名额存入缓存中
+    public boolean openSign(Integer activityId) {
         Activity activity = activityMapper.loadActivityById(activityId);
-        if(activity.getVolunteerNum() == null) return false;//返回类型为Integer, 默认为null
-        else return redisUtils.addActivityCache(activityId, activity.getVolunteerNum());
+        statusMapper.setActivityStatusById(activityId, 1);
+        return redisUtils.addActivityCache(activityId, activity.getRestNum());
     }
 
-    //关闭报名，将活动id和名额从redis中移除
-    public boolean closeSign(Integer activityId){
+    //关闭报名，将活动id和名额从redis中移除，并将剩余名额写入MySQL
+    public boolean closeSign(Integer activityId) {
         Set<Integer> volunteers = redisUtils.getAllStudentId(activityId);
         Date applyTime = new Date();
-        //先把redis中活动的志愿者名单(small key)写入MySQL
-        for(Integer studentId : volunteers){
-            if(!applicationListMapper.isApplied(studentId,activityId)){//如果没有报名记录则写入报名表中
+        //先把redis中活动报名名单(small key)写入MySQL
+        for (Integer studentId : volunteers) {
+            //写申请表
+            if (Boolean.FALSE.equals(applicationListMapper.isApplied(studentId, activityId))) {//如果没有报名记录则写入报名表中
                 ApplicationList applicationList = new ApplicationList(studentId, activityId, applyTime);
                 applicationListMapper.applyActivity(applicationList);//返回值怎么考虑？
             }
-            if(!volunteerListMapper.isAdded(studentId,activityId)){//如果没有记录则写入志愿者表中
-                VolunteerList volunteerList = new VolunteerList(studentId, activityId);
-                volunteerListMapper.addVolunteer(volunteerList);//返回值怎么考虑？
+            //如果为普通选拔模式
+            if (modeMapper.getUsingMode().getId() == 1) {
+                if (Boolean.FALSE.equals(volunteerListMapper.isAdded(studentId, activityId))) {//如果没有记录写入志愿者表中
+                    VolunteerList volunteerList = new VolunteerList(studentId, activityId);
+                    volunteerListMapper.addVolunteer(volunteerList);//返回值怎么考虑？
+                }
             }
         }
+        //如果为多目标选拔模式
+        if (modeMapper.getUsingMode().getId() == 2) {
+            //将多目标优化算法选拔的志愿者写入志愿者表
+        }
+        statusMapper.setActivityStatusById(activityId, 2);
+        activityMapper.updateRestNum(activityId, redisUtils.getRestNum(activityId));
+        //从缓存中移除活动
         return redisUtils.removeActivityCache(activityId);
     }
 
@@ -108,11 +123,6 @@ public class ActivityService {
     //获取已经结束的活动
     public List<Activity> loadEndActivity() {
         return activityMapper.loadEndActivity();
-    }
-
-    //取消活动报名
-    public boolean cancelSign(Integer activityId){
-        return redisUtils.removeStudentCache(activityId, userService.getCurrentId());
     }
 
 }

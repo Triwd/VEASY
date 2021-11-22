@@ -4,14 +4,32 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.veasy.mapper.UserMapper">
     <select id="loadUserById" resultType="org.veasy.entity.User">
-        SELECT * FROM user u WHERE u.`id` = #{id}
+        SELECT *
+        FROM user u
+        WHERE u.`id` = #{id}
     </select>
 
     <select id="loadUserByStudentNo" resultType="org.veasy.entity.User">
-        SELECT * FROM user u WHERE u.`studentNo` =#{studentNo}
+        SELECT *
+        FROM user u
+        WHERE u.`studentNo` = #{studentNo}
     </select>
 
     <update id="revisePwd">
-        UPDATE user s set s.`password` = #{newPwd} WHERE s.`id` = #{id}
+        UPDATE user s
+        SET s.`password` = #{newPwd}
+        WHERE s.`id` = #{id}
+    </update>
+
+    <select id="loadVolunteersById">
+        SELECT vl.`studentId`
+        FROM volunteer_list vl
+        WHERE vl.`activityId` = #{activityId}
+    </select>
+
+    <update id="updateActivityHoursById">
+        UPDATE user u
+        SET u.`activityHours` = u.`activityHours` + #{hours}
+        WHERE u.`id` = #{volunteerId}
     </update>
 </mapper>

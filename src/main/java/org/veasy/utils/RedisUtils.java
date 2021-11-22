@@ -33,17 +33,16 @@ public class RedisUtils {
         return result;
     }
 
-    //将一条学生报名活动记录添加到缓存中
-    public boolean addStudentCache(Integer activityId, Integer studentId) {
+    //(普通选拔)将一条学生报名活动记录添加到缓存中
+    public boolean addStudentCacheInNormalMode(Integer activityId, Integer studentId) {
         synchronized (this) {
             boolean result = false;
-            if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))) {
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))
+                    && Boolean.FALSE.equals(redisTemplate.boundHashOps(activityId).hasKey(studentId))) {
                 Integer restnum = (Integer) redisTemplate.boundHashOps(activityId).get(0);
                 if (restnum != null && restnum > 0) {
                     try {
-                        Date date = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd :hh:mm:ss");
-                        redisTemplate.boundHashOps(activityId).put(studentId, dateFormat.format(date));
+                        redisTemplate.boundHashOps(activityId).put(studentId, new Date());
                         restnum--;
                         redisTemplate.boundHashOps(activityId).put(0, restnum);
                         result = true;
@@ -56,12 +55,67 @@ public class RedisUtils {
         }
     }
 
-    //将一条学生报名活动记录从缓存中移除
-    public boolean removeStudentCache(Integer activityId, Integer studentId) {
+    //(多目标选拔)将一条学生报名活动记录添加到缓存中
+    public boolean addStudentCacheInMOPMode(Integer activityId, Integer studentId) {
+        synchronized (this) {
+            boolean result = false;
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))
+                    && Boolean.FALSE.equals(redisTemplate.boundHashOps(activityId).hasKey(studentId))) {
+                try {
+                    redisTemplate.boundHashOps(activityId).put(studentId, new Date());
+                    result = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+    }
+
+    //(普通选拔)将一条学生报名活动记录从缓存中移除
+    public boolean removeStudentCacheInNormalMode(Integer activityId, Integer studentId) {
+        synchronized (this) {
+            boolean result = false;
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))
+                    && Boolean.TRUE.equals(redisTemplate.boundHashOps(activityId).hasKey(studentId))) {
+                Integer restNum = (Integer) redisTemplate.boundHashOps(activityId).get(0);
+                try {
+                    redisTemplate.boundHashOps(activityId).delete(studentId);
+                    restNum++;
+                    redisTemplate.boundHashOps(activityId).put(0, restNum);
+                    result = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+
+    }
+
+    //(多目标选拔)将一条学生报名活动记录从缓存中移除
+    public boolean removeStudentCacheInMOPMode(Integer activityId, Integer studentId) {
+        synchronized (this) {
+            boolean result = false;
+            if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))
+                    && Boolean.TRUE.equals(redisTemplate.boundHashOps(activityId).hasKey(studentId))) {
+                try {
+                    redisTemplate.boundHashOps(activityId).delete(studentId);
+                    result = true;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+    }
+
+    //将一项活动添加到缓存中（开启报名）
+    public boolean addActivityCache(Integer activityId, Integer restNum) {
         boolean result = false;
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId)) && Boolean.TRUE.equals(redisTemplate.boundHashOps(activityId).hasKey(studentId))) {
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(activityId))) {
             try {
-                redisTemplate.boundHashOps(activityId).delete(studentId);
+                redisTemplate.boundHashOps(activityId).put(0, restNum);
                 result = true;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -70,26 +124,12 @@ public class RedisUtils {
         return result;
     }
 
-    //将一项活动从缓存中移除(关闭报名或取消活动时用)
+    //将一项活动从缓存中移除(关闭报名或取消活动)
     public boolean removeActivityCache(Integer activityId) {
         boolean result = false;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))) {
             try {
                 redisTemplate.delete(activityId);
-                result = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    //将一项活动添加到缓存中（创建新活动）
-    public boolean addActivityCache(Integer activityId, Integer restNum) {
-        boolean result = false;
-        if (!Boolean.TRUE.equals(redisTemplate.hasKey(activityId))) {
-            try {
-                redisTemplate.boundHashOps(activityId).put(0, restNum);
                 result = true;
             } catch (Exception e) {
                 e.printStackTrace();

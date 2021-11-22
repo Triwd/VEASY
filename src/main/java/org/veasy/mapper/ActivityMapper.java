@@ -33,4 +33,9 @@ public interface ActivityMapper {
 
     //返回时间区间内的活动
     List<Activity> loadActivityByTime(@Param("sT") Date startTime, @Param("eT") Date endTime);
+
+    //更新活动剩余名额（关闭报名时用）
+    boolean updateRestNum(Integer activityId, Integer restNum);
+
+    boolean activitySummary(Integer activityId, String summary);
 }

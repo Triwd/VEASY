@@ -11,7 +11,8 @@
 
     <select id="isAdded" resultType="Boolean">
         SELECT *
-        FROM application_list a
-        WHERE a.`studentId` = #{studentId} AND a.`activityId` = #{activityId}
+        FROM application_form a
+        WHERE a.`studentId` = #{studentId}
+          AND a.`activityId` = #{activityId}
     </select>
 </mapper>
