@@ -1,19 +1,22 @@
 package org.veasy.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.veasy.entity.*;
+import org.springframework.stereotype.Service;
+import org.veasy.entity.Activity;
+import org.veasy.entity.Role;
+import org.veasy.entity.User;
 import org.veasy.mapper.*;
 import org.veasy.utils.RedisUtils;
 import org.veasy.utils.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -90,18 +93,14 @@ public class UserService implements UserDetailsService {
     //申请修改密码
     public boolean applyRevisePwd(String idCard) {
         String realIdCard = userMapper.getIdCardByStudentNo(getCurrentStudentNo());
-        if (idCard == realIdCard) return true;
-        else return false;
+        return Objects.equals(idCard, realIdCard);
     }
 
     //修改密码
     public boolean revisePwd(String newPwd) {
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String pwdAfterEncode = bCryptPasswordEncoder.encode(newPwd);
-        if(userMapper.revisePwd(pwdAfterEncode, getCurrentId()) == 1){
-            return true;
-        }
-        else return false;
+        return userMapper.revisePwd(pwdAfterEncode, getCurrentId()) == 1;
     }
 
     /**
@@ -110,10 +109,8 @@ public class UserService implements UserDetailsService {
 
     //生成季度报告
     public List<Activity> generateSeasonReport(){
-
-        Date currentDate = new Date();
         Calendar time = Calendar.getInstance();
-        int currentDateMonth = currentDate.getMonth();
+        int currentDateMonth = time.get(Calendar.MONTH);
         int startMonth = 1;
         if(currentDateMonth < 4) startMonth = 4;
         else if(currentDateMonth < 7) startMonth = 7;
@@ -163,7 +160,7 @@ public class UserService implements UserDetailsService {
     public boolean activitySummary(Integer activityId, String summary) {
         Date nowTime = new Date();
         if (nowTime.compareTo(activityMapper.loadActivityById(activityId).getEndTime()) >= 0) {//现在时间已经大于等于结束时间
-            List<Integer> volunteersId = userMapper.loadVolunteersById(activityId);
+            List<Integer> volunteersId = applicationListMapper.loadVolunteersById(activityId);
             statusMapper.setActivityStatusById(activityId, 3);
             //更新志愿者时长
             Float hours = activityMapper.loadActivityById(activityId).getHours();
@@ -172,5 +169,9 @@ public class UserService implements UserDetailsService {
             }
             return activityMapper.activitySummary(activityId, summary);
         } else return false;
+    }
+
+    public User loadUserById(Integer studentId) {
+        return userMapper.loadUserByStudentId(studentId);
     }
 }

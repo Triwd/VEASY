@@ -38,4 +38,8 @@ public interface ActivityMapper {
     boolean updateRestNum(Integer activityId, Integer restNum);
 
     boolean activitySummary(Integer activityId, String summary);
+
+    Date getSignTimeById(Integer activityId);
+
+    boolean setSignTimeById(Integer activityId, Date signTime);
 }

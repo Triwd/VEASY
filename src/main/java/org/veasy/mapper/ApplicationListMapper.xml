@@ -11,17 +11,16 @@
             applyTime  = #{applyTime}
     </insert>
 
-    <delete id="cancelApply" resultType="Boolean">
-        DELETE
-        FROM application_form af
-        WHERE af.`studentId` = #{studentId}
-          AND af.`activityId` = #{activityId}
-    </delete>
-
-    <select id="isApplied" resultType="Boolean">
+    <select id="isApplied" resultType="boolean">
         SELECT *
         FROM application_form a
         WHERE a.`studentId` = #{studentId}
           AND a.`activityId` = #{activityId}
+    </select>
+
+    <select id="loadVolunteersById">
+        SELECT vl.`studentId`
+        FROM volunteer_list vl
+        WHERE vl.`activityId` = #{activityId}
     </select>
 </mapper>

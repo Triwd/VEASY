@@ -8,6 +8,9 @@ import org.veasy.entity.VolunteerList;
 import org.veasy.mapper.*;
 import org.veasy.utils.RedisUtils;
 import org.veasy.utils.Util;
+import org.veasy.utils.solutionOfMop.CalculateUtils;
+import org.veasy.utils.solutionOfMop.HandleResult;
+import org.veasy.utils.solutionOfMop.NoDominatedUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -54,6 +57,7 @@ public class ActivityService {
 
     //开启报名，将活动id和剩余名额存入缓存中
     public boolean openSign(Integer activityId) {
+        activityMapper.setSignTimeById(activityId, new Date());
         Activity activity = activityMapper.loadActivityById(activityId);
         statusMapper.setActivityStatusById(activityId, 1);
         return redisUtils.addActivityCache(activityId, activity.getRestNum());
@@ -63,15 +67,18 @@ public class ActivityService {
     public boolean closeSign(Integer activityId) {
         Set<Integer> volunteers = redisUtils.getAllStudentId(activityId);
         Date applyTime = new Date();
-        //先把redis中活动报名名单(small key)写入MySQL
+        //先把redis中活动报名名单(small key)写入MySQL的申请表中
         for (Integer studentId : volunteers) {
             //写申请表
-            if (Boolean.FALSE.equals(applicationListMapper.isApplied(studentId, activityId))) {//如果没有报名记录则写入报名表中
+            if (Boolean.FALSE.equals(applicationListMapper.isApplied(studentId, activityId))) {//如果没有申请记录则写入申请表中
                 ApplicationList applicationList = new ApplicationList(studentId, activityId, applyTime);
                 applicationListMapper.applyActivity(applicationList);//返回值怎么考虑？
             }
-            //如果为普通选拔模式
-            if (modeMapper.getUsingMode().getId() == 1) {
+        }
+        //根据模式不同，以不同方式写报名表
+        //如果为普通选拔模式
+        if (modeMapper.getUsingMode().getId() == 1) {
+            for (Integer studentId : volunteers) {
                 if (Boolean.FALSE.equals(volunteerListMapper.isAdded(studentId, activityId))) {//如果没有记录写入志愿者表中
                     VolunteerList volunteerList = new VolunteerList(studentId, activityId);
                     volunteerListMapper.addVolunteer(volunteerList);//返回值怎么考虑？
@@ -79,8 +86,21 @@ public class ActivityService {
             }
         }
         //如果为多目标选拔模式
-        if (modeMapper.getUsingMode().getId() == 2) {
+        else {
+            Double[] aVolunteer = CalculateUtils.appropriateVolunteer();
+            //处理MOP计算结果，得到实际活动情况下最优志愿者信息
+            HandleResult.handleHours(aVolunteer[0]);
+            HandleResult.handleDate(aVolunteer[1], activityMapper.getSignTimeById(activityId), applyTime);
             //将多目标优化算法选拔的志愿者写入志愿者表
+            NoDominatedUtils noDominatedUtils = new NoDominatedUtils();
+            //获取经过非支配排序的结果
+            Integer[] noDominatedVolunteersId = noDominatedUtils.calNoDominatedVolunteer(activityId, volunteers);
+            for (Integer studentId : noDominatedVolunteersId) {
+                if (Boolean.FALSE.equals(volunteerListMapper.isAdded(studentId, activityId))) {//如果没有记录写入志愿者表中
+                    VolunteerList volunteerList = new VolunteerList(studentId, activityId);
+                    volunteerListMapper.addVolunteer(volunteerList);//返回值怎么考虑？
+                }
+            }
         }
         statusMapper.setActivityStatusById(activityId, 2);
         activityMapper.updateRestNum(activityId, redisUtils.getRestNum(activityId));

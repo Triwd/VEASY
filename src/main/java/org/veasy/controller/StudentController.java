@@ -2,9 +2,11 @@ package org.veasy.controller;
 
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.veasy.entity.Response;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.veasy.entity.Response;
 import org.veasy.service.ActivityService;
 import org.veasy.service.StatusService;
 import org.veasy.service.UserService;
@@ -50,7 +52,7 @@ public class StudentController {
     @RequestMapping("/applyRevisePwd")
     @ResponseBody
     public Response applyRevisePwd(String idCard) {
-        if (userService.applyRevisePwd(idCard) == true) {
+        if (userService.applyRevisePwd(idCard)) {
             return new Response("success", "身份匹配成功O(∩_∩)O");
         } else return new Response("failed", "匹配失败(T_T)");
     }

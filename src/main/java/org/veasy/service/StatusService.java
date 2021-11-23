@@ -13,8 +13,7 @@ public class StatusService {
     StatusMapper statusMapper;
 
     public String getStatusById(Integer id){
-        String statusName = statusMapper.getStatusById(id);
-        return statusName;
+        return statusMapper.getStatusById(id);
     }
 
     public void addValueOfStatus(List<Activity> activityList) {

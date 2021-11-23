@@ -1,16 +1,19 @@
 package org.veasy.controller;
 
-import org.veasy.entity.Response;
-import org.veasy.service.ActivityService;
-import org.veasy.service.UserService;
-import org.veasy.utils.RedisUtils;
-import org.veasy.entity.Activity;
-import org.veasy.entity.Response;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.veasy.entity.Activity;
+import org.veasy.entity.Response;
+import org.veasy.service.ActivityService;
+import org.veasy.service.StatusService;
+import org.veasy.service.UserService;
+import org.veasy.utils.RedisUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -23,6 +26,9 @@ public class AdminController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    StatusService statusService;
 
     @Autowired
     RedisUtils redisUtils;
@@ -79,26 +85,27 @@ public class AdminController {
         return activityService.getActivityById(activityId);
     }
 
+    //根据时间区间加载活动
     @RequestMapping("/loadActivityByTime")
     @ResponseBody
-    public List<Activity> loadActivityByTime(Date startTime, Date endTime){
-        return activityService.loadActivityByTime(startTime, endTime);
+    public List<Activity> loadActivityByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime) {
+        List<Activity> activityList = activityService.loadActivityByTime(startTime, endTime);
+        statusService.addValueOfStatus(activityList);
+        return activityList;
     }
 
     //生成季度报告
     @RequestMapping("/generateSeasonReport")
     @ResponseBody
     public List<Activity> generateSeasonReport(){
-        List<Activity> seasonReport = userService.generateSeasonReport();
-        return seasonReport;
+        return userService.generateSeasonReport();
     }
 
     //生成年度报告
     @RequestMapping("/generateYearReport")
     @ResponseBody
     public List<Activity> generateYearReport() {
-        List<Activity> yearReport = userService.generateYearReport();
-        return yearReport;
+        return userService.generateYearReport();
     }
 
     //开启普通选拔模式

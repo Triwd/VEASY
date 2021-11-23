@@ -9,7 +9,7 @@
         WHERE sm.`use` = 1
     </select>
 
-    <update id="setMode" resultType="Boolean">
+    <update id="setMode">
         UPDATE select_mode sm
         SET sm.`use` = #{use}
     </update>

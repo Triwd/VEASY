@@ -68,5 +68,17 @@
         SET a.`summary` = #{summary}
         WHERE a.`id` = #{activityId}
     </update>
+
+    <select id="getSignTimeById" resultType="java.util.Date">
+        SELECT a.`signTime`
+        FROM activity a
+        WHERE a.`id` = #{activityId}
+    </select>
+
+    <update id="setSignTimeById">
+        UPDATE activity a
+        SET a.signTime = #{signTime}
+        WHERE a.`id` = #{activityId}
+    </update>
 </mapper>
 
