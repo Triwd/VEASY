@@ -47,13 +47,17 @@ public class ActivityController {
     @RequestMapping("/user/loadFailedActivity")
     @ResponseBody
     public List<Activity> loadFailedActivity() {
-        return activityService.loadFailedActivity();
+        List<Activity> activityList = activityService.loadFailedActivity();
+        statusService.addValueOfStatus(activityList);
+        return activityList;
     }
 
     @RequestMapping("/user/loadMyActivity")
     @ResponseBody
     public List<Activity> loadMyActivity() {
-        return activityService.loadMyActivity();
+        List<Activity> activityList = activityService.loadMyActivity();
+        statusService.addValueOfStatus(activityList);
+        return activityList;
     }
 
 }
