@@ -89,4 +89,12 @@ public class StudentController {
     public Integer getRestNumById(Integer activityId) {
         return activityService.getRestNumById(activityId);
     }
+
+    @RequestMapping("/submitFeedback")
+    @ResponseBody
+    public Response submitFeedback(String content) {
+        if (userService.submitFeedback(content)) {
+            return new Response("success", "提交成功，感谢您的反馈！");
+        } else return new Response("failed", "提交失败，请重试或者联系管理人员！");
+    }
 }

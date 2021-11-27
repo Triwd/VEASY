@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.veasy.mapper.FeedbackMapper">
+    <insert id="submitFeedback" parameterType="org.veasy.entity.Feedback" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO feedback
+        SET `studentId`  = #{studentId},
+            `submitTime` = #{submitTime},
+            `content`    = #{content}
+    </insert>
+
+    <select id="checkFeedback" resultType="org.veasy.entity.Feedback">
+        SELECT *
+        FROM feedback
+    </select>
+</mapper>

@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.veasy.entity.Activity;
+import org.veasy.entity.Feedback;
 import org.veasy.entity.Role;
 import org.veasy.entity.User;
 import org.veasy.mapper.*;
@@ -41,6 +42,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     StatusMapper statusMapper;
+
+    @Autowired
+    FeedbackMapper feedbackMapper;
 
     @Override
     public UserDetails loadUserByUsername(String studentNo) throws UsernameNotFoundException {
@@ -102,6 +106,7 @@ public class UserService implements UserDetailsService {
         String pwdAfterEncode = bCryptPasswordEncoder.encode(newPwd);
         return userMapper.revisePwd(pwdAfterEncode, getCurrentId()) == 1;
     }
+
 
     /**
      * Service of admin
@@ -173,5 +178,17 @@ public class UserService implements UserDetailsService {
 
     public User loadUserById(Integer studentId) {
         return userMapper.loadUserByStudentId(studentId);
+    }
+
+    public boolean submitFeedback(String content) {
+        Feedback feedback = new Feedback();
+        feedback.setStudentId(getCurrentId());
+        feedback.setSubmitTime(new Date());
+        feedback.setContent(content);
+        return feedbackMapper.submitFeedback(feedback);
+    }
+
+    public List<Feedback> checkFeedback() {
+        return feedbackMapper.checkFeedback();
     }
 }

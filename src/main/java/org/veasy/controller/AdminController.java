@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.veasy.entity.Activity;
+import org.veasy.entity.Feedback;
 import org.veasy.entity.Response;
+import org.veasy.entity.User;
 import org.veasy.service.ActivityService;
 import org.veasy.service.StatusService;
 import org.veasy.service.UserService;
@@ -126,5 +128,17 @@ public class AdminController {
             return new Response("success", "开启多目标选拔模式成功！");
         }
         return new Response("failed", "开启多目标选拔模式失败，请重试或联系管理员！");
+    }
+
+    @RequestMapping("/checkFeedback")
+    @ResponseBody
+    public List<Feedback> checkFeedback() {
+        return userService.checkFeedback();
+    }
+
+    @RequestMapping("/checkSubmitterMsg")
+    @ResponseBody
+    public User checkSubmitterMsg(Integer studentId) {
+        return userService.loadUserById(studentId);
     }
 }
