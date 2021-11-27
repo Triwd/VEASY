@@ -32,22 +32,28 @@
     <select id="loadUnderApplyActivity" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
-        LEFT JOIN status s ON a.`statusId` = s.`id`
+                 LEFT JOIN status s ON a.`statusId` = s.`id`
         WHERE a.`statusId` = 1
     </select>
 
     <select id="loadEndActivity" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
-        LEFT JOIN status s ON a.`statusId` = s.`id`
         WHERE a.`statusId` = 3
+    </select>
+
+    <select id="loadAppliedActivity" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity a
+                 LEFT JOIN application_form af ON a.id = af.activityId
+        WHERE af.`studentId` = #{studentId}
     </select>
 
     <select id="loadMyActivity" resultType="org.veasy.entity.Activity">
         SELECT *
         FROM activity a
                  LEFT JOIN volunteer_list vl ON a.`id` = vl.`activityId`
-        WHERE vl.`studentId` = #{id}
+        WHERE vl.`studentId` = #{studentId}
     </select>
 
     <select id="loadActivityByTime" resultType="org.veasy.entity.Activity">

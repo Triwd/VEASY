@@ -135,9 +135,31 @@ public class ActivityService {
         return activityMapper.loadUnderApplyActivity();
     }
 
+    //获取用户申请过的活动
+    public List<Activity> loadAppliedActivity() {
+        return activityMapper.loadAppliedActivity(userService.getCurrentId());
+    }
+
+    ;
+
     //获取当前用户已参与的活动（包括报名成功“即将开始“和”已结束“）
     public List<Activity> loadMyActivity() {
         return activityMapper.loadMyActivity(Util.getCurrentUser().getId());
+    }
+
+    //获取报名失败的活动
+    public List<Activity> loadFailedActivity() {
+        List<Activity> activities = loadAppliedActivity();
+        List<Activity> myActivities = loadMyActivity();
+        for (Activity myActivity : myActivities) {
+            for (Activity appliedActivity : activities) {
+                if (appliedActivity.getId() == myActivity.getId()) {
+                    activities.remove(appliedActivity);
+                    break;
+                }
+            }
+        }
+        return activities;
     }
 
     //获取已经结束的活动
