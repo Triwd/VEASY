@@ -36,7 +36,7 @@ public class ActivityController {
         return activityList;
     }
 
-    @RequestMapping("/user/loadUnderApplyActivity")
+    @RequestMapping("/student/loadUnderApplyActivity")
     @ResponseBody
     public List<Activity> loadUnderApplyActivity() {
         List<Activity> activityList = activityService.loadUnderApplyActivity();
@@ -44,7 +44,7 @@ public class ActivityController {
         return activityList;
     }
 
-    @RequestMapping("/user/loadFailedActivity")
+    @RequestMapping("/student/loadFailedActivity")
     @ResponseBody
     public List<Activity> loadFailedActivity() {
         List<Activity> activityList = activityService.loadFailedActivity();
@@ -52,7 +52,7 @@ public class ActivityController {
         return activityList;
     }
 
-    @RequestMapping("/user/loadMyActivity")
+    @RequestMapping("/student/loadMyActivity")
     @ResponseBody
     public List<Activity> loadMyActivity() {
         List<Activity> activityList = activityService.loadMyActivity();

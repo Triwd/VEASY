@@ -32,4 +32,10 @@
         FROM user u
         WHERE u.`id` = #{studentId}
     </select>
+
+    <select id="getActivityTimesById">
+        SELECT *
+        FROM volunteer_list vl
+        WHERE vl.`id` = #{studentId}
+    </select>
 </mapper>

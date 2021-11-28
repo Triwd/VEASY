@@ -176,10 +176,12 @@ public class UserService implements UserDetailsService {
         } else return false;
     }
 
+    //根据Id加载用户
     public User loadUserById(Integer studentId) {
         return userMapper.loadUserByStudentId(studentId);
     }
 
+    //提交反馈
     public boolean submitFeedback(String content) {
         Feedback feedback = new Feedback();
         feedback.setStudentId(getCurrentId());
@@ -188,7 +190,13 @@ public class UserService implements UserDetailsService {
         return feedbackMapper.submitFeedback(feedback);
     }
 
+    //查看所有反馈
     public List<Feedback> checkFeedback() {
         return feedbackMapper.checkFeedback();
+    }
+
+    //获取用户的志愿活动次数
+    public Integer getActivityTimesById(Integer studentId) {
+        return userMapper.getActivityTimesById(studentId);
     }
 }

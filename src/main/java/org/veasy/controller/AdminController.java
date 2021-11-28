@@ -99,15 +99,17 @@ public class AdminController {
     //生成季度报告
     @RequestMapping("/generateSeasonReport")
     @ResponseBody
-    public List<Activity> generateSeasonReport(){
-        return userService.generateSeasonReport();
+    public String generateSeasonReport() {
+        Integer numsOfActivity = userService.generateSeasonReport().size();
+        return numsOfActivity.toString();
     }
 
     //生成年度报告
     @RequestMapping("/generateYearReport")
     @ResponseBody
-    public List<Activity> generateYearReport() {
-        return userService.generateYearReport();
+    public String generateYearReport() {
+        Integer numsOfActivity = userService.generateYearReport().size();
+        return numsOfActivity.toString();
     }
 
     //开启普通选拔模式

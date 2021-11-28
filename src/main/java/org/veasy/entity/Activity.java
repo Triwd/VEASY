@@ -3,14 +3,14 @@ package org.veasy.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.lang.*;
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class Activity {
     private Integer id;
     private String name;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date endTime;
     private String location;
     private Integer volunteerNum;
@@ -20,6 +20,15 @@ public class Activity {
     private String status;
     private Float hours;
     private Integer restNum;
+    private Date signTime;
+
+    public Date getSignTime() {
+        return signTime;
+    }
+
+    public void setSignTime(Date signTime) {
+        this.signTime = signTime;
+    }
 
     public Integer getRestNum() {
         return restNum;

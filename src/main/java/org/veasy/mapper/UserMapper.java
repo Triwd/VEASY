@@ -16,4 +16,6 @@ public interface UserMapper {
     void updateActivityHoursById(Integer volunteerId, Float hours);
 
     User loadUserByStudentId(Integer studentId);
+
+    Integer getActivityTimesById(Integer studentId);
 }
