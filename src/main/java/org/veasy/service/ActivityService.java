@@ -70,7 +70,8 @@ public class ActivityService {
         //先把redis中活动报名名单(small key)写入MySQL的申请表中
         for (Integer studentId : volunteers) {
             //写申请表
-            if (Boolean.FALSE.equals(applicationListMapper.isApplied(studentId, activityId))) {//如果没有申请记录则写入申请表中
+            if (Boolean.FALSE.equals(applicationListMapper.isApplied(studentId, activityId) != null)) {//如果没有申请记录则写入申请表中
+                if (studentId == 0) continue;
                 ApplicationList applicationList = new ApplicationList(studentId, activityId, applyTime);
                 applicationListMapper.applyActivity(applicationList);//返回值怎么考虑？
             }
@@ -79,7 +80,8 @@ public class ActivityService {
         //如果为普通选拔模式
         if (modeMapper.getUsingMode().getId() == 1) {
             for (Integer studentId : volunteers) {
-                if (Boolean.FALSE.equals(volunteerListMapper.isAdded(studentId, activityId))) {//如果没有记录写入志愿者表中
+                if (studentId == 0) continue;
+                if (Boolean.FALSE.equals(volunteerListMapper.isAdded(studentId, activityId) != null)) {//如果没有记录写入志愿者表中
                     VolunteerList volunteerList = new VolunteerList(studentId, activityId);
                     volunteerListMapper.addVolunteer(volunteerList);//返回值怎么考虑？
                 }

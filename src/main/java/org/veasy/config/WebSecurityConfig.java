@@ -38,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().formLogin()
                 .successForwardUrl("/login_success")
                 .failureForwardUrl("/login_error")
-                .loginPage("/login_page.html")
                 .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
                     httpServletResponse.setContentType("application/json;charset=utf-8");
                     PrintWriter out = httpServletResponse.getWriter();
@@ -59,7 +58,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/MOPtest");//免登录url的设置
+        web.ignoring().antMatchers("/admin/**");//免登录url的设置
     }
 
     @Bean

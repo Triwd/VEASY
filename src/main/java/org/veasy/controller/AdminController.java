@@ -1,6 +1,5 @@
 package org.veasy.controller;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -64,7 +63,7 @@ public class AdminController {
     //关闭报名
     @RequestMapping(value = "/closeSign")
     @ResponseBody
-    public Response closeSign(@Param(value = "id") Integer activityId) {
+    public Response closeSign(Integer activityId) {
         if (activityService.closeSign(activityId)) {
             return new Response("success", "已关闭报名");
         } else return new Response("failed", "活动已经关闭报名或者被取消，如有问题联系运维人员");

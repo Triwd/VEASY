@@ -9,5 +9,5 @@ public interface VolunteerListMapper {
     boolean addVolunteer(VolunteerList volunteerList);
 
     //判断当前用户是否已经报名了id为 activityId 的活动
-    boolean isAdded(Integer studentId, Integer activityId);
+    Integer isAdded(Integer studentId, Integer activityId);
 }

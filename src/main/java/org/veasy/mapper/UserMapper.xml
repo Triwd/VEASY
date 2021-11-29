@@ -3,14 +3,15 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.veasy.mapper.UserMapper">
-    <select id="loadUserById" resultType="org.veasy.entity.User">
-        SELECT *
-        FROM user u
-        WHERE u.`id` = #{id}
-    </select>
 
     <select id="loadUserByStudentNo" resultType="org.veasy.entity.User">
         SELECT *
+        FROM user u
+        WHERE u.`studentNo` = #{studentNo}
+    </select>
+
+    <select id="getIdCardByStudentNo" resultType="java.lang.String">
+        SELECT u.`idCard`
         FROM user u
         WHERE u.`studentNo` = #{studentNo}
     </select>
@@ -33,7 +34,7 @@
         WHERE u.`id` = #{studentId}
     </select>
 
-    <select id="getActivityTimesById">
+    <select id="getActivityTimesById" resultType="java.lang.Integer">
         SELECT *
         FROM volunteer_list vl
         WHERE vl.`id` = #{studentId}

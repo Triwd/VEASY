@@ -9,7 +9,7 @@
             activityId = #{activityId}
     </insert>
 
-    <select id="isAdded" resultType="Boolean">
+    <select id="isAdded" resultType="java.lang.Integer">
         SELECT *
         FROM application_form a
         WHERE a.`studentId` = #{studentId}

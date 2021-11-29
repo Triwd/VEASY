@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -13,10 +12,6 @@ public class RedisUtils {
 
     @Autowired
     private RedisTemplate redisTemplate;
-
-    /**
-     *  即刻报名版本
-     */
 
     //获取活动剩余名额
     public Integer getRestNum(Integer activityId) {

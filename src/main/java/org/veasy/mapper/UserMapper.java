@@ -9,7 +9,7 @@ public interface UserMapper {
 
     User loadUserByStudentNo(@Param("studentNo") String studentNo);
 
-    String getIdCardByStudentNo(String currentStudentNo);
+    String getIdCardByStudentNo(String studentNo);
 
     int revisePwd(@Param("newPwd") String newPwd, @Param("id") Integer currentId);
 

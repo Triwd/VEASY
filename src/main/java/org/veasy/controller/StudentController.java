@@ -3,7 +3,6 @@ package org.veasy.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.veasy.entity.Response;
 import org.veasy.entity.User;
@@ -42,7 +41,7 @@ public class StudentController {
     }
 
     //修改密码
-    @RequestMapping(value = "/revisePwd", method = RequestMethod.POST)
+    @RequestMapping(value = "/revisePwd")
     @ResponseBody
     public Response revisePwd(String newPwd){
         if (userService.revisePwd(newPwd)) {
