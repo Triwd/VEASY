@@ -19,9 +19,15 @@
 
 <!--    取消活动要删除活动表，报名表，志愿者表中的全部信息-->
     <delete id="cancelActivity">
-        DELETE FROM activity a WHERE a.`id` = #{activityId};
-        DELETE FROM application_form af WHERE af.`activityId` = #{activityId};
-        DELETE FROM volunteer_list vl WHERE vl.`activityId` = #{activityId};
+        DELETE
+        FROM application_form af
+        WHERE af.`activityId` = #{activityId};
+        DELETE
+        FROM volunteer_list vl
+        WHERE vl.`activityId` = #{activityId};
+        DELETE
+        FROM activity a
+        WHERE a.`id` = #{activityId};
     </delete>
 
     <select id="loadAllActivity" resultType="org.veasy.entity.Activity">
@@ -86,5 +92,11 @@
         SET a.signTime = #{signTime}
         WHERE a.`id` = #{activityId}
     </update>
+
+    <select id="loadActivityById" resultType="org.veasy.entity.Activity">
+        SELECT *
+        FROM activity a
+        WHERE a.`id` = #{activityId}
+    </select>
 </mapper>
 

@@ -6,7 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.veasy.entity.Activity;
 import org.veasy.entity.Feedback;
@@ -36,7 +35,7 @@ public class AdminController {
     RedisUtils redisUtils;
 
     //创建活动
-    @RequestMapping(value = "/createActivity", method = RequestMethod.POST)
+    @RequestMapping(value = "/createActivity")
     @ResponseBody
     public Response createActivity(@RequestBody Activity activity) {
         if (activityService.createActivityByAdmin(activity)) {
@@ -45,25 +44,25 @@ public class AdminController {
     }
 
     //取消活动
-    @RequestMapping (value = "/cancelActivity",method = RequestMethod.POST)
+    @RequestMapping(value = "/cancelActivity")
     @ResponseBody
-    public Response cancelActivity(@Param(value = "id") Integer activityId){
+    public Response cancelActivity(Integer activityId) {
         if (activityService.cancelActivity(activityId)) {
             return new Response("success!", "活动已取消");
         } else return new Response("failed!", "活动不存在，取消活动失败，请刷新页面");
     }
 
     //开启报名
-    @RequestMapping (value = "/openSign",method = RequestMethod.POST)
+    @RequestMapping(value = "/openSign")
     @ResponseBody
-    public Response openSign(@Param(value = "id")Integer activityId){
+    public Response openSign(Integer activityId) {
         if (activityService.openSign(activityId)) {
             return new Response("success", "已开启报名");
         } else return new Response("failed", "活动已经开启，请不要重复开启报名");
     }
 
     //关闭报名
-    @RequestMapping(value = "/closeSign", method = RequestMethod.POST)
+    @RequestMapping(value = "/closeSign")
     @ResponseBody
     public Response closeSign(@Param(value = "id") Integer activityId) {
         if (activityService.closeSign(activityId)) {
@@ -81,9 +80,9 @@ public class AdminController {
     }
 
     //根据id查找活动
-    @RequestMapping(value = "/getActivityById", method = RequestMethod.POST)
+    @RequestMapping(value = "/getActivityById")
     @ResponseBody
-    public Activity getActivityById(@Param(value = "id") Integer activityId) {
+    public Activity getActivityById(Integer activityId) {
         return activityService.getActivityById(activityId);
     }
 
