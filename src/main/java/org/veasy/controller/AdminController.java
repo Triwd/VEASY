@@ -1,5 +1,6 @@
 package org.veasy.controller;
 
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
+@Api(tags = "管理员功能接口")
 public class AdminController {
     @Autowired
     ActivityService activityService;
@@ -39,7 +41,7 @@ public class AdminController {
     @Autowired
     RedisUtils redisUtils;
 
-    //创建活动
+    @ApiOperation(value = "创建活动", notes = "管理员输入活动信息，可以创建新活动")
     @RequestMapping(value = "/createActivity")
     @ResponseBody
     public Response createActivity(Integer id, String name, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime, String location, Integer volunteerNum, String contactWay, Float hours, String description) {
@@ -48,10 +50,15 @@ public class AdminController {
         } else return new Response("failed", "新建活动失败，请重试或者联系运维人员！");
     }
 
-    //取消活动
+    @ApiOperation(value = "取消活动", notes = "根据活动id，管理员可以取消活动")
+    @ApiImplicitParam(paramType = "query", name = "activityId", value = "活动id", required = true)
+    @ApiResponses({
+            @ApiResponse(code = 0, message = "失败"),
+            @ApiResponse(code = 1, message = "成功")
+    })
     @RequestMapping(value = "/cancelActivity")
     @ResponseBody
-    public Response cancelActivity(Integer activityId) {
+    public Response cancelActivity(@RequestParam Integer activityId) {
         if (activityService.cancelActivity(activityId)) {
             return new Response("success!", "活动已取消");
         } else return new Response("failed!", "活动不存在，取消活动失败，请刷新页面");
