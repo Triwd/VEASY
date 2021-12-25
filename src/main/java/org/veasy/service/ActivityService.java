@@ -44,14 +44,15 @@ public class ActivityService {
      */
 
     //管理员创建活动(直接写入SQL)
-    public boolean createActivityByAdmin(Activity activity) {
-        return activityMapper.createActivityByAdmin(activity) == 1;
+    public boolean createActivityByAdmin(Integer id, String name, Date startTime, Date endTime, String location, Integer volunteerNum, String contactWay, Float hours, String description) {
+        return activityMapper.createActivityByAdmin(id, name, startTime, endTime, location, volunteerNum, contactWay, hours, description) == 1;
     }
 
     //取消活动，将活动id和名额从redis和MySQL中移除
-    public boolean cancelActivity(Integer activityId){
-        if (activityMapper.cancelActivity(activityId)) { //如果删除数据库中的活动成功则去删除redis中的对应信息
-            return redisUtils.removeActivityCache(activityId);
+    public boolean cancelActivity(Integer activityId) {
+        redisUtils.removeActivityCache(activityId);
+        if (activityMapper.cancelActivity(activityId) != null) {
+            return true;
         } else return false;
     }
 
@@ -142,8 +143,6 @@ public class ActivityService {
         return activityMapper.loadAppliedActivity(userService.getCurrentId());
     }
 
-    ;
-
     //获取当前用户已参与的活动（包括报名成功“即将开始“和”已结束“）
     public List<Activity> loadMyActivity() {
         return activityMapper.loadMyActivity(Util.getCurrentUser().getId());
@@ -168,5 +167,4 @@ public class ActivityService {
     public List<Activity> loadEndActivity() {
         return activityMapper.loadEndActivity();
     }
-
 }

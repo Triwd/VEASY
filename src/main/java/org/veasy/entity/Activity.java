@@ -15,12 +15,30 @@ public class Activity {
     private String location;
     private Integer volunteerNum;
     private String contactWay;
+    private String description;
     private String summary;
     private Integer statusId;
     private String status;
     private Float hours;
     private Integer restNum;
     private Date signTime;
+    private String imgUrl;
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public Date getSignTime() {
         return signTime;

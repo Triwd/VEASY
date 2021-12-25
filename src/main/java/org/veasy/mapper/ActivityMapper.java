@@ -11,10 +11,10 @@ import java.util.List;
 public interface ActivityMapper {
 
     //返回创建活动结果
-    int createActivityByAdmin(Activity activity);
+    int createActivityByAdmin(Integer id, String name, Date startTime, Date endTime, String location, Integer volunteerNum, String contactWay, Float hours, String description);
 
     //返回取消活动的结果
-    boolean cancelActivity(Integer activityId);
+    Boolean cancelActivity(Integer activityId);
 
     //返回所有活动
     List<Activity> loadAllActivity();

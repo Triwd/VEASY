@@ -6,10 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.veasy.entity.Activity;
-import org.veasy.entity.Feedback;
-import org.veasy.entity.Role;
-import org.veasy.entity.User;
+import org.veasy.entity.*;
 import org.veasy.mapper.*;
 import org.veasy.utils.RedisUtils;
 import org.veasy.utils.Util;
@@ -45,6 +42,9 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     FeedbackMapper feedbackMapper;
+
+    @Autowired
+    NoticeMapper noticeMapper;
 
     @Override
     public UserDetails loadUserByUsername(String studentNo) throws UsernameNotFoundException {
@@ -107,13 +107,17 @@ public class UserService implements UserDetailsService {
         return userMapper.revisePwd(pwdAfterEncode, getCurrentId()) == 1;
     }
 
+    //查看公告
+    public List<Feedback> checkNotice() {
+        return noticeMapper.checkNotice();
+    }
 
     /**
      * Service of admin
      */
 
     //生成季度报告
-    public List<Activity> generateSeasonReport(){
+    public List<Activity> generateSeasonReport() {
         Calendar time = Calendar.getInstance();
         int currentDateMonth = time.get(Calendar.MONTH);
         int startMonth = 1;
@@ -198,5 +202,18 @@ public class UserService implements UserDetailsService {
     //获取用户的志愿活动次数
     public Integer getActivityTimesById(Integer studentId) {
         return userMapper.getActivityTimesById(studentId);
+    }
+
+    //发布公告
+    public boolean publishNotice(String content) {
+        Notice notice = new Notice();
+        notice.setContent(content);
+        notice.setPublishTime(new Date());
+        return noticeMapper.publishNotice(notice);
+    }
+
+    //根据活动Id获取志愿者名单
+    public List<User> loadVolunteerByActivityId(Integer activityId) {
+        return userMapper.loadVolunteerByActivityId(activityId);
     }
 }

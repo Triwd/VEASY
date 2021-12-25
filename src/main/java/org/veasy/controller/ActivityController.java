@@ -18,6 +18,7 @@ public class ActivityController {
     @Autowired
     StatusService statusService;
 
+    //加载所有活动
     @RequestMapping("/admin/loadAllActivity")
     @ResponseBody
     public List<Activity> loadAllActivity() {
@@ -28,6 +29,7 @@ public class ActivityController {
         return activityList;
     }
 
+    //加载已经结束的活动
     @RequestMapping(value = "/admin/loadEndActivity")
     @ResponseBody
     public List<Activity> loadEndActivity() {
@@ -36,6 +38,7 @@ public class ActivityController {
         return activityList;
     }
 
+    //加载报名中的活动
     @RequestMapping("/student/loadUnderApplyActivity")
     @ResponseBody
     public List<Activity> loadUnderApplyActivity() {
@@ -44,6 +47,7 @@ public class ActivityController {
         return activityList;
     }
 
+    //加载报名失败的活动
     @RequestMapping("/student/loadFailedActivity")
     @ResponseBody
     public List<Activity> loadFailedActivity() {
@@ -52,6 +56,7 @@ public class ActivityController {
         return activityList;
     }
 
+    //加载我的活动，包括报名失败的活动和报名成功的活动
     @RequestMapping("/student/loadMyActivity")
     @ResponseBody
     public List<Activity> loadMyActivity() {
@@ -59,5 +64,4 @@ public class ActivityController {
         statusService.addValueOfStatus(activityList);
         return activityList;
     }
-
 }

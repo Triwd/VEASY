@@ -51,14 +51,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     out.write("{\"status\":\"error\",\"msg\":\"登录失败\"}");
                     out.flush();
                     out.close();
-                }).loginProcessingUrl("/login")
+                })
                 .usernameParameter("studentNo").passwordParameter("password").permitAll()
                 .and().logout().permitAll().and().csrf().disable().exceptionHandling().accessDeniedHandler(getAccessDeniedHandler());
     }
 
     @Override
     public void configure(WebSecurity web) {
-        web.ignoring().antMatchers("/admin/**");//免登录url的设置
+        web.ignoring().antMatchers();
     }
 
     @Bean

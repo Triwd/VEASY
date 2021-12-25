@@ -39,4 +39,14 @@
         FROM volunteer_list vl
         WHERE vl.`id` = #{studentId}
     </select>
+
+    <select id="loadVolunteerByActivityId" resultType="org.veasy.entity.User">
+        SELECT *
+        FROM user u
+        WHERE u.`id` IN (
+            SELECT vl.`studentId`
+            FROM volunteer_list vl
+            WHERE vl.`activityId` = #{activityId}
+        )
+    </select>
 </mapper>

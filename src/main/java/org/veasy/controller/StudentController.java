@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.veasy.entity.Feedback;
 import org.veasy.entity.Response;
 import org.veasy.entity.User;
 import org.veasy.service.ActivityService;
@@ -30,6 +31,7 @@ public class StudentController {
 
     @Autowired
     RedisUtils redisUtils;
+
 
     //申请修改密码
     @RequestMapping("/applyRevisePwd")
@@ -89,10 +91,17 @@ public class StudentController {
     public List<String> activitySummary() {
         User currentUser = Util.getCurrentUser();
         List<String> activitySummary = new LinkedList<String>() {{
-            add(currentUser.getName());
-            add(userService.getActivityTimesById(currentUser.getId()).toString());
-            add(currentUser.getActivityHours().toString());
+            add(currentUser.getName());//名字
+            add(userService.getActivityTimesById(currentUser.getId()).toString());//活动次数
+            add(currentUser.getActivityHours().toString());//活动时长
         }};
         return activitySummary;
+    }
+
+    //查看公告
+    @RequestMapping("/checkNotice")
+    @ResponseBody
+    public List<Feedback> checkFeedback() {
+        return userService.checkNotice();
     }
 }

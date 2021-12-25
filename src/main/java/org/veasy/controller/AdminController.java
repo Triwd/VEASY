@@ -1,11 +1,14 @@
 package org.veasy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.veasy.entity.Activity;
 import org.veasy.entity.Feedback;
 import org.veasy.entity.Response;
@@ -15,8 +18,11 @@ import org.veasy.service.StatusService;
 import org.veasy.service.UserService;
 import org.veasy.utils.RedisUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/admin")
@@ -36,8 +42,8 @@ public class AdminController {
     //创建活动
     @RequestMapping(value = "/createActivity")
     @ResponseBody
-    public Response createActivity(@RequestBody Activity activity) {
-        if (activityService.createActivityByAdmin(activity)) {
+    public Response createActivity(Integer id, String name, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime, String location, Integer volunteerNum, String contactWay, Float hours, String description) {
+        if (activityService.createActivityByAdmin(id, name, startTime, endTime, location, volunteerNum, contactWay, hours, description)) {
             return new Response("success", "新建活动成功！");
         } else return new Response("failed", "新建活动失败，请重试或者联系运维人员！");
     }
@@ -85,7 +91,7 @@ public class AdminController {
         return activityService.getActivityById(activityId);
     }
 
-    //根据时间区间加载活动
+    //根据时间区间查找活动
     @RequestMapping("/loadActivityByTime")
     @ResponseBody
     public List<Activity> loadActivityByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date startTime, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date endTime) {
@@ -98,16 +104,26 @@ public class AdminController {
     @RequestMapping("/generateSeasonReport")
     @ResponseBody
     public String generateSeasonReport() {
-        Integer numsOfActivity = userService.generateSeasonReport().size();
-        return numsOfActivity.toString();
+        List<Activity> activities = userService.generateSeasonReport();
+        Integer nums = activities.size();
+        Double hour = 0.0;
+        for (Activity activity : activities) {
+            hour += activity.getHours() * activity.getVolunteerNum();
+        }
+        return "本季度共举办了" + nums.toString() + "次活动，累计时长：" + hour.toString() + "小时";
     }
 
     //生成年度报告
     @RequestMapping("/generateYearReport")
     @ResponseBody
     public String generateYearReport() {
-        Integer numsOfActivity = userService.generateYearReport().size();
-        return numsOfActivity.toString();
+        List<Activity> activities = userService.generateYearReport();
+        Integer nums = activities.size();
+        Double hour = 0.0;
+        for (Activity activity : activities) {
+            hour += activity.getHours() * activity.getVolunteerNum();
+        }
+        return "本年度共举办了" + nums.toString() + "次活动，累计时长：" + hour.toString() + "小时";
     }
 
     //开启普通选拔模式
@@ -130,15 +146,65 @@ public class AdminController {
         return new Response("failed", "开启多目标选拔模式失败，请重试或联系管理员！");
     }
 
+    //查看反馈
     @RequestMapping("/checkFeedback")
     @ResponseBody
     public List<Feedback> checkFeedback() {
         return userService.checkFeedback();
     }
 
-    @RequestMapping("/checkSubmitterMsg")
+    //发布公告
+    @RequestMapping("/publishNotice")
     @ResponseBody
-    public User checkSubmitterMsg(Integer studentId) {
+    public Response publishNotice(String content) {
+        if (userService.publishNotice(content)) {
+            return new Response("success", "您已成功发布公告");
+        } else return new Response("failed", "发布失败，请重试或者联系管理员！");
+    }
+
+    //获取活动的志愿者名单
+    @RequestMapping("/loadVolunteerByActivityId")
+    @ResponseBody
+    public List<User> loadVolunteerByActivityId(Integer activityId) {
+        return userService.loadVolunteerByActivityId(activityId);
+    }
+
+    //
+    @RequestMapping("/getUserById")
+    @ResponseBody
+    public User getUserById(Integer studentId) {
         return userService.loadUserById(studentId);
+    }
+
+    //上传图片
+    @Value("${prop.upload-folder}")
+    private String UPLOAD_FOLDER;
+
+    @PostMapping("/upload")
+    public Response upload(@RequestParam(name = "file", required = false) MultipartFile file, HttpServletRequest request) {
+        if (file == null) {
+            return new Response("failed", "请选择要上传的图片");
+        }
+        if (file.getSize() > 1024 * 1024 * 5) {
+            return new Response("failed", "文件大小不能大于10M");
+        }
+        //获取文件后缀
+        String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1, file.getOriginalFilename().length());
+        if (!"jpg,jpeg,gif,png".toUpperCase().contains(suffix.toUpperCase())) {
+            return new Response("failed", "请选择jpg,jpeg,gif,png格式的图片");
+        }
+        String savePath = UPLOAD_FOLDER;
+        File savePathFile = new File(savePath);
+        //通过UUID生成唯一文件名
+        String filename = UUID.randomUUID().toString().replaceAll("-", "") + "." + suffix;
+        try {
+            //将文件保存指定目录
+            file.transferTo(new File(savePath + filename));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response("failed", "保存文件异常");
+        }
+        //返回文件名称
+        return new Response("success", filename);
     }
 }

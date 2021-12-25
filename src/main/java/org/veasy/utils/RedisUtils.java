@@ -122,7 +122,7 @@ public class RedisUtils {
     //将一项活动从缓存中移除(关闭报名或取消活动)
     public boolean removeActivityCache(Integer activityId) {
         boolean result = false;
-        if (Boolean.TRUE.equals(redisTemplate.hasKey(activityId))) {
+        if (activityId != null && Boolean.TRUE.equals(redisTemplate.hasKey(activityId))) {
             try {
                 redisTemplate.delete(activityId);
                 result = true;

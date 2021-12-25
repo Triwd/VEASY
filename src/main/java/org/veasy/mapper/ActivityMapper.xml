@@ -4,16 +4,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="org.veasy.mapper.ActivityMapper">
 
-    <insert id="createActivityByAdmin" parameterType="org.veasy.entity.Activity" useGeneratedKeys="true" keyProperty="id">
+    <insert id="createActivityByAdmin">
         INSERT INTO activity
-        SET `name`         = #{name},
+        SET `id`           = #{id},
+            `name`         = #{name},
             `startTime`    = #{startTime},
             `endTime`      = #{endTime},
             `location`     = #{location},
             `volunteerNum` = #{volunteerNum},
             `contactWay`   = #{contactWay},
-            `statusId`     = #{statusId},
             `hours`        = #{hours},
+            `description`  = #{description},
             `restNum`      = #{volunteerNum}
     </insert>
 

@@ -1,10 +1,13 @@
 package org.veasy.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class Feedback {
     private Integer id;
     private Integer studentId;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date submitTime;
     private String content;
 
